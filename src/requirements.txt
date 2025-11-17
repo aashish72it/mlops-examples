@@ -1,0 +1,10 @@
+pandas==2.3.3
+numpy==2.3.4
+pytz==2025.2
+ipython==9.7.0
+dotenv==0.9.9
+mlflow==3.6.0
+scikit-learn==1.7.2
+seaborn==0.13.2
+optuna==4.6.0
+optuna-dashboard==0.20.0

@@ -3,6 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+mlruns
+mlflow.db
+optuna_study.db
+
 # C extensions
 *.so
 
