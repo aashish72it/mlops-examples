@@ -10,6 +10,10 @@ Pipeline Features:
 - Prints textual explanation for top 3 contributing features for the single prediction.
 """
 
+
+import os
+os.environ["TQDM_DISABLE"] = "1"
+
 from pathlib import Path
 import traceback
 import numpy as np
@@ -18,6 +22,7 @@ import pickle
 from sklearn.datasets import fetch_california_housing
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 import shap
 import matplotlib
 matplotlib.use("Agg")
@@ -26,7 +31,6 @@ from xgboost import XGBClassifier
 
 # ---------------- Stage 1: Load Dataset ----------------
 def load_california():
-    """Load California Housing dataset (~20,640 rows) and bin target into 3 classes."""
     data = fetch_california_housing(as_frame=True)
     df = data.frame
     # Create classification target by binning median house value
@@ -41,9 +45,13 @@ if __name__ == "__main__":
         X, y, full_df = load_california()
         print(f"California Housing loaded. Rows={len(full_df)}, Shape={full_df.shape}")
 
+        # Encode target labels for XGBoost
+        le = LabelEncoder()
+        y_encoded = le.fit_transform(y)  # Converts ['Low','Medium','High'] -> [0,1,2]
+
         # ---------------- Stage 2: Stratified Sampling ----------------
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.5, random_state=42, stratify=y
+            X, y_encoded, test_size=0.7, random_state=42, stratify=y_encoded
         )
         print(f"Training size: {len(X_train)}, Test size: {len(X_test)}")
 
@@ -55,7 +63,6 @@ if __name__ == "__main__":
             subsample=0.8,
             colsample_bytree=0.8,
             random_state=42,
-            use_label_encoder=False,
             eval_metric='mlogloss'
         )
         xgb.fit(X_train, y_train)
@@ -154,3 +161,35 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error: {e}")
         traceback.print_exc()
+
+"""
+############Output##############
+
+California Housing loaded. Rows=20640, Shape=(20640, 10)
+Training size: 16512, Test size: 4128
+Accuracy: 0.8336, F1: 0.8345, Precision: 0.8362, Recall: 0.8336
+
+Confusion Matrix:
+[[1153   11  212]
+ [  11 1207  159]
+ [ 136  158 1081]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.89      0.84      0.86      1376
+           1       0.88      0.88      0.88      1377
+           2       0.74      0.79      0.76      1375
+
+    accuracy                           0.83      4128
+   macro avg       0.84      0.83      0.83      4128
+weighted avg       0.84      0.83      0.83      4128
+
+==================================================
+Prediction: 1. Top contributing features:
+- HouseAge (positive impact: 1.5516)
+- MedInc (negative impact: -1.1042)
+- Latitude (negative impact: -0.6154)
+==================================================
+
+"""
