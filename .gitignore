@@ -3,6 +3,7 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+.slingshot
 mlruns
 mlflow.db
 optuna_study.db
