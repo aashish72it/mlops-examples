@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+datasets
+trained_models
+explanations
 .slingshot
 mlruns
 mlflow.db
