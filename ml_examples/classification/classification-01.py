@@ -118,7 +118,7 @@ if __name__ == "__main__":
             print(f"WARNING: SHAP mean length {len(shap_abs_mean)} != feature count {len(feature_names)}")
             shap_abs_mean = shap_abs_mean[:len(feature_names)]
 
-        Path("./explanations").mkdir(parents=True, exist_ok=True)
+        Path("./explanations/rf/").mkdir(parents=True, exist_ok=True)
 
         # Global Feature Importance Bar Plot
         order = np.argsort(shap_abs_mean)[::-1]
@@ -127,16 +127,16 @@ if __name__ == "__main__":
         plt.xticks(rotation=30, ha="right")
         plt.title("Global Feature Importance (mean |SHAP|)")
         plt.tight_layout()
-        plt.savefig("./explanations/shap_summary_bar.png", dpi=160)
+        plt.savefig("./explanations/rf/shap_summary_bar.png", dpi=160)
         plt.close()
 
         # Beeswarm Plot
         shap.summary_plot(shap_values_for_plots, X_test, feature_names=feature_names, show=False)
         plt.tight_layout()
-        plt.savefig("./explanations/shap_beeswarm.png", dpi=160)
+        plt.savefig("./explanations/rf/shap_beeswarm.png", dpi=160)
         plt.close()
 
-        print("SHAP explanations saved in ./explanations/")
+        print("SHAP explanations saved in ./explanations/rf/")
 
         # ---------------- Stage 8: Online Inference Example ----------------
         """
