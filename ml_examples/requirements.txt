@@ -1,0 +1,8 @@
+wget
+scikit-learn
+xgboost
+pandas
+numpy
+matplotlib
+mlflow
+shap
