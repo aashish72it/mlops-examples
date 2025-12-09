@@ -6,3 +6,4 @@ numpy
 matplotlib
 mlflow
 shap
+imbalanced-learn
